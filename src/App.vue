@@ -59,13 +59,13 @@
 </template>
 
 <script lang="ts" setup>
-import {onUnmounted,onMounted, reactive} from 'vue'
-import {useRouter} from 'vue-router'
+import {onUnmounted, onMounted, reactive} from 'vue'
+import {NavigationGuardNext, RouteLocationNormalized, useRouter} from 'vue-router'
 import {User, Avatar, Opportunity, Cherry} from '@element-plus/icons-vue'
 
 console.log('App')
 const router = useRouter()
-const state = reactive({
+const state = reactive<any>({
   defaultOpen: ['1'],
   showMenu: true,
   currentPath: '/',
@@ -75,7 +75,7 @@ const state = reactive({
 })
 
 
-const unwatch = router.beforeEach((to, from, next) => {
+const unwatch = router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   next()
   state.currentPath = to.path
 })

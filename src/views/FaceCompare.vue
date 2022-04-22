@@ -4,16 +4,16 @@
   <div class="demo-image__placeholder">
     <div class="block">
       <span class="demonstration">照片1</span>
-      <el-image :src="imageSrc1" fit="contain" class="compare_class_image__lazy">
+      <el-image :src="state.imageSrc1" fit="contain" class="compare_class_image__lazy">
         <template #placeholder>
           <div class="image-slot">Loading<span class="dot">...</span></div>
         </template>
       </el-image>
       <div class="compare_class_select">
         <span style="margin-right: 10px">选择下拉照片</span>
-        <el-select v-model="selectValue1" @change="selectChange(1)" placeholder="Select">
+        <el-select v-model="state.selectValue1" @change="selectChange(1)" placeholder="Select">
           <el-option
-              v-for="item in imageOption1"
+              v-for="item in state.imageOption1"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -35,16 +35,16 @@
     </div>
     <div class="block">
       <span class="demonstration">照片2</span>
-      <el-image :src="imageSrc2" fit="contain" class="compare_class_image__lazy">
+      <el-image :src="state.imageSrc2" fit="contain" class="compare_class_image__lazy">
         <template #placeholder>
           <div class="image-slot">Loading<span class="dot">...</span></div>
         </template>
       </el-image>
       <div class="compare_class_select">
         <span style="margin-right: 10px">选择下拉照片</span>
-        <el-select v-model="selectValue2" @change="selectChange(2)" placeholder="Select">
+        <el-select v-model="state.selectValue2" @change="selectChange(2)" placeholder="Select">
           <el-option
-              v-for="item in imageOption2"
+              v-for="item in state.imageOption2"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -66,132 +66,117 @@
   </div>
   <div style="width: 100%;text-align: center;margin-top: 20px;margin-bottom: 20px;font-size: 20px">
 
-    <span>人脸相似度为: {{ similar }}</span>
+    <span>人脸相似度为: {{ state.similar }}</span>
 
   </div>
 
 </template>
 
-<script>
+<script lang="ts" setup>
 import {onMounted, toRefs, reactive, ref} from 'vue'
 import axios from '@/utils/axios'
 
-export default {
-  name: 'FaceCompare',
-  setup() {
-    const state = reactive({
-      similar: '0',
-      imageSrc1: 'images/Image1-1.jpg',
-      imageSrc2: 'images/Image1-2.jpg',
-      selectValue1: 'Image1-1.jpg',
-      selectValue2: 'Image1-2.jpg',
-      imageOption1: [{
-        value: 'images/Image1-1.jpg',
-        label: 'Image1-1.jpg'
-      },
-        {
-          value: 'images/Image2-1.jpg',
-          label: 'Image2-1.jpg'
-        },
-        {
-          value: 'images/Image3-1.jpg',
-          label: 'Image3-1.jpg'
-        }],
-      imageOption2: [{
-        value: 'images/Image1-2.jpg',
-        label: 'Image1-2.jpg'
-      },
-        {
-          value: 'images/Image2-2.jpg',
-          label: 'Image2-2.jpg'
-        },
-        {
-          value: 'images/Image3-2.jpg',
-          label: 'Image3-2.jpg',
-        },]
-    })
 
-    onMounted(() => {
-      responseDrawImage()
-    })
+const state = reactive({
+  similar: '0',
+  imageSrc1: 'images/Image1-1.jpg',
+  imageSrc2: 'images/Image1-2.jpg',
+  selectValue1: 'Image1-1.jpg',
+  selectValue2: 'Image1-2.jpg',
+  imageOption1: [{
+    value: 'images/Image1-1.jpg',
+    label: 'Image1-1.jpg'
+  },
+    {
+      value: 'images/Image2-1.jpg',
+      label: 'Image2-1.jpg'
+    },
+    {
+      value: 'images/Image3-1.jpg',
+      label: 'Image3-1.jpg'
+    }],
+  imageOption2: [{
+    value: 'images/Image1-2.jpg',
+    label: 'Image1-2.jpg'
+  },
+    {
+      value: 'images/Image2-2.jpg',
+      label: 'Image2-2.jpg'
+    },
+    {
+      value: 'images/Image3-2.jpg',
+      label: 'Image3-2.jpg',
+    },]
+})
 
-    const selectChange = (value) => {
-      if (value === 1) {
-        state.imageSrc1 = state.selectValue1
-      } else if (value === 2) {
-        state.imageSrc2 = state.selectValue2
-      }
-      responseDrawImage()
-    }
+onMounted(() => {
+  responseDrawImage()
+})
 
-    const beforeUpload1 = (file) => {
-      let reader = new FileReader();
-      reader.readAsDataURL(file);//读取图像文件 result 为 DataURL, DataURL 可直接 赋值给 img.src
-      reader.onload = function (event) {
-        state.imageSrc1 = event.target.result
-        responseDrawImage()
-      }
-    }
-    const beforeUpload2 = (file) => {
-      let reader = new FileReader();
-      reader.readAsDataURL(file);//读取图像文件 result 为 DataURL, DataURL 可直接 赋值给 img.src
-      reader.onload = function (event) {
-        state.imageSrc2 = event.target.result
-        responseDrawImage()
-      }
-    }
-
-    const responseDrawImage = () => {
-
-      let image1 = new Image();
-      image1.src = state.imageSrc1;
-      image1.onload = function () {
-        let canvas1 = document.createElement('canvas');
-        canvas1.width = image1.width;
-        canvas1.height = image1.height;
-        let ctx1 = canvas1.getContext("2d");
-        ctx1.drawImage(image1, 0, 0, image1.width, image1.height)
-
-
-        let image2 = new Image();
-        image2.src = state.imageSrc2;
-        image2.onload = function () {
-          let canvas2 = document.createElement('canvas');
-          canvas2.width = image2.width;
-          canvas2.height = image2.height;
-          let ctx2 = canvas2.getContext("2d");
-          ctx2.drawImage(image2, 0, 0, image2.width, image2.height)
-
-
-          axios.post("/compareFaces",
-              {
-                image1: canvas1.toDataURL("image/jpeg"),
-                image2: canvas2.toDataURL("image/jpeg")
-              }
-          ).then(response => {
-            console.info(response)
-            if (response.code === 0) {
-              state.similar = response.data
-            } else {
-              state.similar = response.msg
-            }
-          });
-
-
-        }
-
-
-      }
-    }
-    return {
-      ...toRefs(state),
-      beforeUpload1,
-      beforeUpload2,
-      selectChange
-
-    }
-
+const selectChange = (value: number) => {
+  if (value === 1) {
+    state.imageSrc1 = state.selectValue1
+  } else if (value === 2) {
+    state.imageSrc2 = state.selectValue2
   }
+  responseDrawImage()
+}
+
+const beforeUpload1 = (file: Blob) => {
+  let reader = new FileReader();
+  reader.readAsDataURL(file);//读取图像文件 result 为 DataURL, DataURL 可直接 赋值给 img.src
+  reader.onload = function (event: any) {
+    state.imageSrc1 = event.target.result
+    responseDrawImage()
+  }
+}
+const beforeUpload2 = (file: Blob) => {
+  let reader = new FileReader();
+  reader.readAsDataURL(file);//读取图像文件 result 为 DataURL, DataURL 可直接 赋值给 img.src
+  reader.onload = function (event: any) {
+    state.imageSrc2 = event.target.result
+    responseDrawImage()
+  }
+}
+
+const responseDrawImage = () => {
+
+  let image1 = new Image();
+  image1.src = state.imageSrc1;
+  image1.onload = function () {
+    let canvas1 = document.createElement('canvas');
+    canvas1.width = image1.width;
+    canvas1.height = image1.height;
+    let ctx1: any = canvas1.getContext("2d");
+    ctx1.drawImage(image1, 0, 0, image1.width, image1.height)
+
+
+    let image2 = new Image();
+    image2.src = state.imageSrc2;
+    image2.onload = function () {
+      let canvas2 = document.createElement('canvas');
+      canvas2.width = image2.width;
+      canvas2.height = image2.height;
+      let ctx2: any = canvas2.getContext("2d");
+      ctx2.drawImage(image2, 0, 0, image2.width, image2.height)
+
+
+      axios.post("/compareFaces",
+          {
+            image1: canvas1.toDataURL("image/jpeg"),
+            image2: canvas2.toDataURL("image/jpeg")
+          }
+      ).then((response: any) => {
+        console.info(response)
+        if (response.code === 0) {
+          state.similar = response.data
+        } else {
+          state.similar = response.msg
+        }
+      });
+    }
+  }
+
 }
 </script>
 

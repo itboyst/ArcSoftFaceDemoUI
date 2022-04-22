@@ -1,37 +1,27 @@
-import {createRouter, createWebHashHistory} from "vue-router";
-
-import FaceDetect from '../views/FaceDetect.vue'
-import FaceCompare from '../views/FaceCompare.vue'
-import faceRecognition from '../views/FaceRecognition.vue'
-import faceStream from '../views/FaceStream.vue'
-import faceStream222 from '../views/FaceStream222.vue'
+import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        component: () => FaceDetect
+        component: () => import("@/views/FaceDetect.vue")
     },
     {
         path: '/faceDetect',
-        component: () => FaceDetect
+        component: () =>import("@/views/FaceDetect.vue")
     },
     {
         path: '/faceCompare',
-        component: () => FaceCompare
+        component: () => import("@/views/FaceCompare.vue")
     },
     {
         path: '/faceRecognition',
-        component: () => faceRecognition
+        component: () => import("@/views/FaceRecognition.vue")
     },
     {
         path: '/faceStream',
-        component: () => faceStream
-    },
-    {
-        path: '/faceStream2',
-        component: () => faceStream222
-    },
+        component: () =>import("@/views/FaceStream.vue")
+    }
 ]
 
 
