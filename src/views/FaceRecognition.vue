@@ -56,11 +56,11 @@ import {onMounted, toRefs, reactive} from 'vue'
 import axios from '@/utils/axios'
 
 const state = reactive({
-  selectValue: 'images/zhaoyang.jpg',
+  selectValue: 'images/Image1-1.jpg',
   imageSrc: '',
   imageOption: [{
-    value: 'images/zhaoyang.jpg',
-    label: '赵丽颖&杨紫',
+    value: 'images/Image1-1.jpg',
+    label: '照片1',
   }]
 })
 
